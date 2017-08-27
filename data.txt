@@ -1,0 +1,15 @@
+Comparision between Struct and Class in C++
+Similarity:
+- Concept: Define new data type, or new group of variable.
+- Coding: Access through a dot (.) (with object type) or an right arrow(->) (with pointer type).
+- Method: Internal function.
+- Constructor: Special method, initialise member.
+- Inherited: easily single inheritance, multiple inheritance ("virtual").
+- Type name: Create new data type, can be used in programme.
+- Pointer initialise: both can be used with "new".
+- Friendship: External function can access to struct or class that declared "friend".
+Difference:
+Struct:
+- Accessibility: members are default public.
+Class:
+- Accessibility: members are default private.
