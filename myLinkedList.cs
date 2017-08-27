@@ -262,8 +262,9 @@ namespace DataBase {
                 LargestNode = RemoveNode.prev;
                 while (LargestNode.next != null) LargestNode = LargestNode.next;
 
-                searchParent (LargestNode.data, RemoveParent).next = null;
-                RemoveParent.data = LargestNode.data;
+                if (LargestNode == RemoveNode.prev) RemoveNode.prev = null;
+                else searchParent (LargestNode.data, RemoveParent).next = null;
+                RemoveNode.data = LargestNode.data;
             }
         }
         public void print () {
@@ -290,9 +291,9 @@ namespace DataBase {
             newTree.insert (7);
             newTree.insert (1);
             newTree.insert (5);
-            newTree.search (1);
-            newTree.delete (1);
-            newTree.search (1);
+            newTree.search (6);
+            newTree.delete (6);
+            newTree.search (6);
 
             Console.ReadKey ();
         }
