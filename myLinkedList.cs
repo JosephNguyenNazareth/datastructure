@@ -171,13 +171,23 @@ namespace DataBase {
     }
     public class BinaryTree {
         public Node root;
-        public int quantity = 0;
+        public int quantity;
         public void insert (int NewData) {
             if (root == null) {
                 root = new Node ();
                 root.data = NewData;
                 quantity = 1;
             } else insertNode (root, NewData);
+        }
+        public void insert (int[] NewDataList) {
+            if (root == null) {
+                root = new Node ();
+                root.data = NewDataList[0];
+                quantity = 1;
+            }
+            int index = 1;
+            while (index++ < NewDataList.Length)
+                insertNode (root, NewDataList[index - 1]);
         }
         public void insertNode (Node current, int NewData) {
             if (NewData < current.data) {
@@ -275,7 +285,7 @@ namespace DataBase {
         }
         public void print () {
             // this method will print on screen 3 types: infix, prefix and postfix notations
-            Node printNode = new Node ();
+            Console.WriteLine ("Number of nodes: {0}", quantity);
 
             // prefix notation
             Console.Write ("Prefix notation: ");
@@ -316,7 +326,7 @@ namespace DataBase {
             newList.deleteNode (1,4);
             newList.printList (); */
             BinaryTree newTree = new BinaryTree ();
-            newTree.insert (4);
+            /*newTree.insert (4);
             newTree.insert (6);
             newTree.insert (2);
             newTree.insert (9);
@@ -325,6 +335,11 @@ namespace DataBase {
             newTree.insert (1);
             newTree.insert (0);
             newTree.insert (5);
+            */
+            int[] NumList = { 4, 6, 2, 9, 7, 3, 1, 0, 5 };
+            int[] SecondNumList = { 10, 13, 45, 23, 56, 14, 10 };
+            newTree.insert (NumList);
+            newTree.insert (SecondNumList);
             newTree.print ();
 
             Console.ReadKey ();
