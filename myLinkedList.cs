@@ -198,17 +198,23 @@ namespace DataBase {
             if (searchNode (SearchData, root) == null) Console.WriteLine ("Not found.");
             else Console.WriteLine ("Found.");
         }
+        // searchNode return the node that has the value being searched
         public Node searchNode (int SearchData, Node current) {
-            if (current == null) return null;
-            else if (current.data == SearchData) return current;
+            if (current.data == SearchData) return current;
+            // the value searching is greater than the current node, so we move to node's right to continue to check
             else if (current.data < SearchData) return searchNode (SearchData, current.next);
+            // the value searching is less than the current node, so we move to node's left to continue to check
             else return searchNode (SearchData, current.prev);
         }
         public Node searchParent (int SearchData, Node parent) {
+            // root node has no parent!
             if (root.data == SearchData) return null;
             else if (parent.data > SearchData) {
+                // the left edge has no node, cannot find the value that less than parent value
                 if (parent.prev == null) return null;
+                // yes, we found the node. Now return the parent of that node
                 else if (parent.prev.data == SearchData) return parent;
+                // since we haven't found that node yet, keep digging in the tree
                 else return searchParent (SearchData, parent.prev);
             } else {
                 if (parent.next == null) return null;
@@ -268,12 +274,38 @@ namespace DataBase {
             }
         }
         public void print () {
+            // this method will print on screen 3 types: infix, prefix and postfix notations
             Node printNode = new Node ();
-            printNode = root;
-            while (printNode.prev != null) {
-                Console.Write ("{0},", printNode.data);
-                printNode = printNode.prev;
-            }
+
+            // prefix notation
+            Console.Write ("Prefix notation: ");
+            printPreOrder (root);
+
+            // infix notation
+            Console.Write ("\nInfix notation: ");
+            printInOrder (root);
+
+            // postfix notation
+            Console.Write ("\nPostfix notation: ");
+            printPostOrder (root);
+        }
+        public void printPreOrder (Node current) {
+            if (current == null) return;
+            Console.Write ("{0},", current.data);
+            printPreOrder (current.prev);
+            printPreOrder (current.next);
+        }
+        public void printInOrder (Node current) {
+            if (current == null) return;
+            printInOrder (current.prev);
+            Console.Write ("{0},", current.data);
+            printInOrder (current.next);
+        }
+        public void printPostOrder (Node current) {
+            if (current == null) return;
+            printPostOrder (current.prev);
+            printPostOrder (current.next);
+            Console.Write ("{0},", current.data);
         }
     }
     class Test {
@@ -289,11 +321,11 @@ namespace DataBase {
             newTree.insert (2);
             newTree.insert (9);
             newTree.insert (7);
+            newTree.insert (3);
             newTree.insert (1);
+            newTree.insert (0);
             newTree.insert (5);
-            newTree.search (6);
-            newTree.delete (6);
-            newTree.search (6);
+            newTree.print ();
 
             Console.ReadKey ();
         }
