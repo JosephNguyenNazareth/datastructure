@@ -163,11 +163,6 @@ namespace DataBase {
             }
             Console.WriteLine ("{0}", head.data); // print the "last" node backwards
         }
-        public void listCentre () {
-            Console.WriteLine ("Select your options: ");
-            string option = Console.ReadLine ();
-            // switch (Convert.ToInt16 (option))
-        }
     }
     public class BinaryTree {
         public Node root;
