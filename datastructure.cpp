@@ -6,13 +6,13 @@ public:
   Node *prev;
   Node *next;
   int data;
-  Node(){
-	  next = 0;
-	  prev= 0;
+  Node() {
+    next = 0;
+    prev = 0;
   };
-  Node(int newdata) : data(newdata){
-	  next = 0;
-	  prev= 0;
+  Node(int newdata) : data(newdata) {
+    next = 0;
+    prev = 0;
   };
   ~Node(){};
 };
@@ -20,7 +20,8 @@ public:
 class LinkedList {
 public:
   Node *head = 0;
-  Node *current = new Node();
+  Node *current = 0;
+  unsigned int listSize = 0;
   void setList() {
     // read list of data from input
     std::cout << "Enter list: ";
@@ -47,6 +48,7 @@ public:
       head = new Node(NewData);
     } else if (head->next == NULL) { // there is only one node
       head->next = new Node();
+      current = new Node();
       current = head->next;
       current->data = NewData;
     } else if (current->next == NULL) { // the next node afterwards
@@ -54,6 +56,7 @@ public:
       current = current->next;
       current->data = NewData;
     }
+    listSize++;
   }
   void addHead(int NewData) {
     // create a new head node
@@ -67,7 +70,42 @@ public:
       head->next =
           SecondValue; // pass the original linked list to new head node
     }
+    listSize++;
   }
+
+  bool isNull() {
+    if (this->head == NULL)
+      return true;
+    else
+      return false;
+  }
+
+  int getMax() {
+    Node *valueMax = new Node();
+    valueMax = this->head;
+
+    int max = 0;
+    while (valueMax != NULL) {
+      if (max < valueMax->data)
+        max = valueMax->data;
+      valueMax = valueMax->next;
+    }
+    return max;
+  }
+
+  int getMin() {
+    Node *valueMin = new Node();
+    valueMin = this->head;
+
+    int min = valueMin->data;
+    while (valueMin != NULL) {
+      if (min > valueMin->data)
+        min = valueMin->data;
+      valueMin = valueMin->next;
+    }
+    return min;
+  }
+
   void deleteNode(int RemoveData) {
     // bool for found the remove node
     bool found = false;
@@ -91,8 +129,14 @@ public:
       PrevValue = Value;
       Value = Value->next;
     }
-    if (!found)
+    if (found)
+      listSize--;
+    else
       std::cout << "Value not found. Cannot delete." << std::endl;
+  }
+  void clear() {
+    if (head != NULL)
+      head = NULL;
   }
   void deleteNode(int position, int quantity) {
     // create a variable for running through the list
@@ -114,8 +158,10 @@ public:
         PrevValue = Value;
         match = true;
       }
-      if (match)
+      if (match) {
         quantity--; // start deletion
+        listSize--;
+      }
       if (quantity == 0) {
         if (position == 0)
           head = Value->next;
@@ -128,6 +174,16 @@ public:
     }
     if (index < position)
       std::cout << "Position not Found" << std::endl;
+  }
+
+  void replaceNode(unsigned int position, int value) {
+    Node *ReplaceValue = new Node();
+    ReplaceValue = head;
+    while (position > 0) {
+      ReplaceValue = ReplaceValue->next;
+      position--;
+    }
+    ReplaceValue->data = value;
   }
   void searchNode(int SearchData) {
     // set position index for node, with head node equal to 0
@@ -152,6 +208,31 @@ public:
     else
       std::cout << "Not found. No item match";
   }
+  LinkedList Reverse() {
+    LinkedList reverse;
+    ReverseCore(reverse, this->head);
+    return reverse;
+  }
+  void ReverseCore(LinkedList &reverse, Node *MyNode) {
+    if (MyNode->next == NULL) { // base case: original linked list reach
+                                // its end, start assign original last node
+                                // to the new list
+      // add node to new list
+      reverse.addLast(MyNode->data);
+      return;
+    }
+    // BACKTRACK
+    ReverseCore(reverse, MyNode->next);
+    // after each return, the node of the original list
+    // will be assigned to the new list
+    reverse.addLast(MyNode->data);
+  }
+
+  void Merge(LinkedList afterList) {
+    this->current->next = afterList.head;
+    this->listSize += afterList.listSize;
+  }
+  void size() { std::cout << "List size is: " << listSize << std::endl; }
   void printList() {
     // create temporary node for reading the whole list
     Node *Value = new Node();
@@ -164,46 +245,59 @@ public:
     // last node
     std::cout << Value->data << std::endl;
   }
-  void printListReverse() {
-    // create temporary node for reading the whole list backward from tail to
-    // head
-    Node *CurrValue = new Node();
-    // create temporary node for reading the whole list forward from head to
-    // CurrValue, which has been declared
-    Node *PrevValue = new Node();
+  void printListReverse() { printReverse(head); }
+  void printReverse(Node *MyNode) {
+    if (MyNode == NULL)
+      return;
 
-    // set CurrValue to the last position, the tail node
-    CurrValue = current;
-
-    // now start to read backwards
-    while (CurrValue != head) {
-      // assigned PrevValue to head node and begin running from head to
-      // CurrValue
-      PrevValue = head;
-      while (PrevValue->next != CurrValue) {
-        PrevValue = PrevValue->next; // move to next node
-      }
-      std::cout << CurrValue->data; // print the node backwards
-      CurrValue = PrevValue;        // move to previous node backwards
-    }
-    std::cout << head->data; // print the "last" node backwards
+    printReverse(MyNode->next);
+    if (MyNode->data == head->data)
+      std::cout << MyNode->data << std::endl;
+    else
+      std::cout << MyNode->data << "<-";
   }
+  LinkedList &operator=(LinkedList assignData);
 };
 
+LinkedList &LinkedList::operator=(LinkedList assignData) {
+  // clear all the list
+  this->clear();
+
+  // create temporary node for browsing all data
+  Node *assign = new Node();
+
+  // assign to the start of list
+  assign = assignData.head;
+
+  // begin to assgin
+  while (assign != NULL) { // if the temoprary node is not NULL, which mean not
+                           // reach the last node, keep assigning
+    // add value to new Node
+    this->addLast(assign->data);
+    // move to next assigned node
+    assign = assign->next;
+  }
+  // finally, return the assigned linked list
+  return *this;
+}
+
 int main(int argc, char **argv) {
-  LinkedList *newList = new LinkedList;
-  newList->setList();
-  /*newList->addLast(4);
-  newList->addLast(5);
-  newList->addLast(1);
-  newList->addLast(2);
-  newList->addLast(9);
-  newList->addLast(7);
-  */ newList->deleteNode(2);
-  newList->deleteNode(1, 4);
-  newList->printList();
+  LinkedList newList;
+  newList.setList();
+  std::cout << &(newList.head->next) << std::endl;
+  newList.printListReverse();
 
-  delete newList;
+  LinkedList secondList;
+  secondList.addLast(100);
+  secondList.addLast(10);
+  secondList.addLast(1);
 
+  newList.Merge(secondList);
+  newList.printList();
+  std::cout << newList.getMax() << "," << newList.getMin() << std::endl;
+
+  LinkedList thirdList;
+  thirdList = newList.Reverse();
+  thirdList.printList();
   return 0;
 }
